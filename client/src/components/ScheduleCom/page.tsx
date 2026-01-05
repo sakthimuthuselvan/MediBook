@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React from 'react'
 
 interface scheduleProps {
     scheduleData: {
@@ -10,7 +10,7 @@ interface scheduleProps {
         emergency: string;
     }[]
 }
-const ScheduleCom: React.FC<scheduleProps> = ({scheduleData}) => {
+const ScheduleCom: React.FC<scheduleProps> = ({ scheduleData }) => {
     return (
         <div className='bg-slate-50'>
             <div className='mt-5 pt-10 mx-3'>
@@ -33,8 +33,8 @@ const ScheduleCom: React.FC<scheduleProps> = ({scheduleData}) => {
                             </thead>
                             <tbody>
                                 {scheduleData.map((row: any, index: any) => {
-                                    let check1 = row.specialistConsultations === "Closed" ? true : false
-                                    let check2 = row.generalPractice === "Closed" ? true : false
+                                    const check1 = row.specialistConsultations === "Closed" ? true : false
+                                    const check2 = row.generalPractice === "Closed" ? true : false
                                     return (
                                         <tr key={index} className="text-md">
                                             <td className="px-4 py-4 border-b font-bold text-slate-700">{row.day}</td>

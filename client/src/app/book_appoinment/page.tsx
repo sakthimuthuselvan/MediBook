@@ -10,7 +10,7 @@ const PatientDetails = React.lazy(() => import("@/components/FormDetails/Patient
 const AppointmentDetails = React.lazy(() => import("@/components/AppoinmentForm/AppointmentDetails"))
 const ConfirmationCom = React.lazy(() => import("@/app/book_appoinment/Confirmation/ConfirmationCom"))
 
-const bookAppoinment = () => {
+const BookAppoinment = () => {
     const formData = useSelector((state: RootState) => state.form)
     const current_step = formData?.currentStep || ""    
     return (
@@ -57,4 +57,4 @@ const bookAppoinment = () => {
     )
 }
 
-export default bookAppoinment
+export default BookAppoinment

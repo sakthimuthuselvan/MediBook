@@ -4,6 +4,7 @@ import { FaUser } from "react-icons/fa";
 import { selectTimeSlot } from '@/store/FormSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
+
 const TimeSlotCom = () => {
     const dispatch = useDispatch();
     const formData = useSelector((state: RootState) => state.form)
@@ -37,8 +38,8 @@ const TimeSlotCom = () => {
 
                 <div className='grid grid-cols-2 md:grid-cols-5 gap-2 mt-4'>
                     {OVERALL?.time_slots.map((item: any, i: number) => {
-                        let hide_slot = item.is_booked || item.is_closed_by_admin ? true : false;
-                        let selected = formData.selectedTime === item.time
+                        const hide_slot = item.is_booked || item.is_closed_by_admin ? true : false;
+                        const selected = formData.selectedTime === item.time
                         return (
                             <div key={i}
                                 onClick={() => !hide_slot ? timeBtnClick(item) : null}

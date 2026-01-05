@@ -29,8 +29,8 @@ export default function Error({ error, reset }: ErrorProps) {
       const text = (error && (error.stack || error.message)) ? `${error.stack || error.message}` : JSON.stringify(error);
       await navigator.clipboard.writeText(text);
       setAlert({ open: true, status: 'success', message: 'Copied error details to clipboard' });
-    } catch (e) {
-      setAlert({ open: true, status: 'failure', message: 'Failed to copy details' });
+    } catch (e: any) {
+      setAlert({ open: true, status: 'failure', message: e?.message || 'Failed to copy details' });
     }
   };
 
@@ -51,8 +51,8 @@ export default function Error({ error, reset }: ErrorProps) {
       const id = res?.id || res?.reportId || res?.report_id || null;
       setReportId(id);
       setAlert({ open: true, status: 'success', message: id ? `Report sent (id: ${id})` : 'Report sent' });
-    } catch (e) {
-      setAlert({ open: true, status: 'failure', message: 'Failed to send report' });
+    } catch (e: any) {
+      setAlert({ open: true, status: 'failure', message: e?.message || "Something went Wrong" });
     } finally {
       setReporting(false);
     }

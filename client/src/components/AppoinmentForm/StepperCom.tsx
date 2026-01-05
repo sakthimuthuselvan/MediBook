@@ -3,7 +3,7 @@ import { RootState } from '@/store/store';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-const StepperCom = ({ currentStep = 1 }: { currentStep?: number }) => {
+const StepperCom = () => {
     const formdata = useSelector((state: RootState) => state.form);
     return (
         <div className="p-4 mt-3 w-full">

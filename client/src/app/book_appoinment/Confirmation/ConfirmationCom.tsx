@@ -3,10 +3,11 @@ import { RootState } from '@/store/store';
 import React, { Suspense } from 'react'
 import { FaCalendarCheck, FaUser } from 'react-icons/fa';
 import { FaLocationDot } from 'react-icons/fa6';
-import { IoCheckmarkOutline, IoCheckmarkSharp } from 'react-icons/io5'
+import { IoCheckmarkSharp } from 'react-icons/io5'
 import { TiDocumentText } from 'react-icons/ti';
 import { useSelector } from 'react-redux';
 import moment from  "moment"
+import Image from 'next/image';
 const ContactSectionCom = React.lazy(() => import("./ContactSection"))
 const ConfirmationCom = () => {
     const formData = useSelector((state: RootState) => state.form)    
@@ -84,11 +85,21 @@ const ConfirmationCom = () => {
                             <h2 className="text-lg font-semibold mb-4">Appointment Details</h2>
 
                             <div className="flex items-start gap-3 mb-4">
-                                <img
-                                    src={data.appointment.doctor.photo}
-                                    alt="Doctor"
-                                    className="h-10 w-10 rounded-full"
-                                />
+                                {data?.appointment?.doctor?.photo ? (
+                                    <Image
+                                        src={data.appointment.doctor.photo}
+                                        alt="Doctor"
+                                        width={40}
+                                        height={40}
+                                        className="rounded-full"
+                                        loading="lazy"
+                                        priority={false}
+                                    />
+                                ) : (
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                                        <FaUser className='text-blue-600' />
+                                    </div>
+                                )}
                                 <div>
                                     <p className="font-semibold">{data.appointment.doctor.name}</p>
                                     <p className="text-blue-600 text-sm">{data.appointment.doctor.specialty}</p>

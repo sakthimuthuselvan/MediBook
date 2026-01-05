@@ -1,8 +1,9 @@
 'use client';
 import React, { useState } from 'react';
 import { RootState } from '@/store/store';
+import CustomAlert from '@/components/ui/CustomAlert';
 import { CgNotes } from 'react-icons/cg';
-import { FaPhoneAlt, FaRegUser, FaUser } from 'react-icons/fa';
+import { FaRegUser } from 'react-icons/fa';
 import { MdOutlineDateRange, MdOutlineLocalPhone, MdOutlineMailOutline } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateForm, nextStepChange } from "@/store/FormSlice"
@@ -19,6 +20,18 @@ const PatientDetails = () => {
     const formData = useSelector((state: RootState) => state.form);
     const dispatch = useDispatch()
 
+    const [alert, setAlert] = useState({ open: false, status: 'failure' as 'failure' | 'success', message: '' });
+
+    const getMinDate = () => {
+        const d = new Date();
+        d.setDate(d.getDate() + 1);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    };
+    const minDateStr = getMinDate();
+
 
     // Handle input changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -31,11 +44,21 @@ const PatientDetails = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        // validate date exists and not before tomorrow
+        if (!formData.doa) {
+            setAlert({ open: true, status: 'failure', message: 'Please select an appointment date.' });
+            return;
+        }
+        if (formData.doa < minDateStr) {
+            setAlert({ open: true, status: 'failure', message: `Please select a date from ${minDateStr} or later.` });
+            return;
+        }
         dispatch(nextStepChange())
-    };
+    }; 
 
     return (
         <div className="my-10 p-5 shadow-xl border rounded-md bg-white">
+            <CustomAlert open={alert.open} status={alert.status} message={alert.message} onClose={() => setAlert((pre) => ({ ...pre, open: false }))} />
             {/* Header */}
             <h2 className="text-slate-800 text-2xl font-bold flex items-center gap-2 mb-1">
                 <FaRegUser className="text-blue-600 text-[18px]" />
@@ -113,6 +136,7 @@ const PatientDetails = () => {
                             name="doa"
                             placeholder='Enter your Date of Appoinment'
                             value={formData.doa}
+                            min={minDateStr}
                             onChange={handleChange}
                             className="w-full border border-gray-300 rounded-md px-3 py-3 text-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required

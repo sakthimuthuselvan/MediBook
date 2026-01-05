@@ -4,6 +4,7 @@ import React, { Suspense, useEffect, useState } from 'react'
 import { FaChevronLeft, FaChevronRight, FaUser } from "react-icons/fa";
 import { IoMdStar } from 'react-icons/io';
 import { bookedData, nextStepChange, previousStepChange, selectDoctor } from '@/store/FormSlice';
+import CustomAlert from '@/components/ui/CustomAlert';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { HttpRequest } from '@/lib/HttpRequest';
@@ -12,6 +13,8 @@ const TimeSlotCom = React.lazy(() => import("@/components/AppoinmentForm/TImeSlo
 
 const AppointmentDetails = () => {
 	const [overall, setOverall] = useState([])
+	const [loading, setLoading] = useState(false)
+	const [alert, setAlert] = useState({ open: false, status: 'failure' as 'failure' | 'success', message: '' })
 	const dispatch = useDispatch();
 	const formData = useSelector((state: RootState) => state.form)
 	const selectedDoctor = formData?.selectDoctor || {}
@@ -32,10 +35,22 @@ const AppointmentDetails = () => {
 			})
 			setOverall(response?.data || [])
 		} catch (error) {
-
+			setAlert({ open: true, status: 'failure', message: 'Failed to load doctors. Please try again.' })
 		}
 	}
+
 	const continueConfirmBtnClick = async () => {
+		// Client-side validation
+		if (!formData?.selectDoctor?._id) {
+			setAlert({ open: true, status: 'failure', message: 'Please select a doctor before confirming.' })
+			return
+		}
+		if (!formData?.selectedTime) {
+			setAlert({ open: true, status: 'failure', message: 'Please select a time slot.' })
+			return
+		}
+
+		setLoading(true)
 		try {
 			const response = await HttpRequest({
 				url: "/appointments/create", method: "POST",
@@ -45,23 +60,32 @@ const AppointmentDetails = () => {
 					"email": formData?.email || "",
 					"phone": formData?.phone || "",
 					"doa": formData?.doa || "",
-					"reason":formData?.reason || "",
+					"reason": formData?.reason || "",
 					"selectedTime": formData?.selectedTime || "",
 					"selectDoctor": formData?.selectDoctor?._id || "",
 				}
 			})
-					dispatch(bookedData(response?.data ))
 
-					dispatch(nextStepChange())
+			// Expecting response.data to contain booking info
+			if (response?.data) {
+				dispatch(bookedData(response?.data))
+				setAlert({ open: true, status: 'success', message: 'Appointment booked successfully!' })
+				dispatch(nextStepChange())
+			} else {
+				setAlert({ open: true, status: 'failure', message: 'Booking failed. Please try again.' })
+			}
 
 		} catch (error) {
-
+			setAlert({ open: true, status: 'failure', message: 'Booking failed. Please try again.' })
+		} finally {
+			setLoading(false)
 		}
 
 	}
 
 	return (
 		<div>
+			<CustomAlert open={alert.open} status={alert.status} message={alert.message} onClose={() => setAlert(prev => ({ ...prev, open: false }))} />
 			<div className='p-5 shadow rounded-md mt-5'>
 				<div className='flex items-center'>
 					<div className='mr-3 inline-block bg-blue-100 text-blue-600 p-2 rounded-sm '>
@@ -72,7 +96,7 @@ const AppointmentDetails = () => {
 
 				<div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
 					{overall.map((item: any, index: number) => {
-						let check = selectedDoctor._id === item._id ? true : false
+						const check = selectedDoctor._id === item._id ? true : false
 						return (
 							<div onClick={() => doctorSelectBtnClick(item)}
 								key={index}
@@ -112,7 +136,7 @@ const AppointmentDetails = () => {
 					<div className='md:hidden inline-block rounded-xl bg-blue-200 px-4 py-4 text-blue-700'>
 						<FaChevronLeft className='' />
 					</div>
-					<button onClick={() => continueConfirmBtnClick()} className='p-3 text-white bg-blue-600 rounded-md font-semibold tracking-wide flex items-center cursor-pointer hover:bg-blue-700 transition-colors duration-300'>Confirm Book <FaChevronRight className='ml-2' /> </button>
+					<button onClick={() => continueConfirmBtnClick()} disabled={loading} className='p-3 text-white bg-blue-600 rounded-md font-semibold tracking-wide flex items-center cursor-pointer hover:bg-blue-700 transition-colors duration-300 disabled:opacity-60 disabled:cursor-not-allowed'>{loading ? 'Booking...' : 'Confirm Book'} <FaChevronRight className='ml-2' /> </button>
 				</div>
 			</div>
 		</div>

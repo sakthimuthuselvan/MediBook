@@ -1,8 +1,5 @@
 "use client";
-
-import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { redirect } from "next/navigation";
 import { CalendarCheck2, Stethoscope, Users, IndianRupee, CalendarClock } from "lucide-react";
 
 import DashboardSection from "./DashboardSection";
@@ -15,19 +12,6 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 export default function AdminPage() {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
-
-  // useEffect(() => {
-  //   const token = localStorage.getItem("authToken");
-  //   if (!token) {
-  //     redirect("/login");
-  //   } else {
-  //     setIsLoggedIn(true);
-  //   }
-  // }, []);
-
-  // if (!isLoggedIn) return null;
-
   const kpis = [
     {
       title: "Bookings Today",

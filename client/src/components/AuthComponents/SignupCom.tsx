@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import Image from "next/image"
 
 export function SignupCom({
     className,
@@ -14,12 +15,15 @@ export function SignupCom({
             <Card className="overflow-hidden p-0 ">
                 <CardContent className="grid p-0 md:grid-cols-2">
                     <div className="bg-muted relative hidden md:block">
-                        <img
-                            src="/login_vector.jpg"
-                            alt="Image"
-                            className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-                        />
 
+                        <Image
+                            src={"/login_vector.jpg"}
+                            alt="Image"
+                            fill
+                            className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                            loading="lazy"
+                            priority={false}
+                        />
                     </div>
                     <form className="p-6 md:p-8">
                         <div className="flex flex-col gap-3">
@@ -63,7 +67,14 @@ export function SignupCom({
                             </div>
                             <div className="grid grid-cols-1 gap-4">
                                 <Button variant="outline" type="button" className="w-full">
-                                    <img src={"/google_icon.png"} className="h-5" />
+                                    <Image
+                                        src={"/google_icon.png"}
+                                        alt="Google Icon"
+                                        fill
+                                        className="h-5"
+                                        loading="lazy"
+                                        priority={false}
+                                    />
                                     <span className="">Login with Google</span>
                                 </Button>
                             </div>

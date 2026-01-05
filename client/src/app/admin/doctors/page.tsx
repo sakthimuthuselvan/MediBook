@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import Image from "next/image";
 
 type Doctor = {
   id: string | number;
@@ -44,7 +45,7 @@ const DoctorsPage = () => {
   useEffect(() => {
     const loadDoctors = async () => {
       try {
-        const json = await HttpRequest({ url: "/doctors", method: "GET" });        
+        const json = await HttpRequest({ url: "/doctors", method: "GET" });
         const docs = json?.data || [];
         // Map server doctor shape to client Doctor shape
         const mapped = docs.map((d: any) => ({
@@ -58,7 +59,8 @@ const DoctorsPage = () => {
           // tags: [],
         }));
         setDoctors(mapped);
-      } catch (err) {
+      } catch (err: any) {
+        throw new Error(err?.message || "Somthing went wrong")
       }
     };
     loadDoctors();
@@ -119,7 +121,8 @@ const DoctorsPage = () => {
         certifications: [],
         // tags: [],
       });
-    } catch (err) {
+    } catch (err: any) {
+      throw new Error(err?.message || "Something went wrong")
     }
   };
 
@@ -129,7 +132,9 @@ const DoctorsPage = () => {
       const _id = String(id);
       await HttpRequest({ url: `/doctors/${_id}`, method: "DELETE" });
       setDoctors((prev) => prev.filter((d) => d.id !== id));
-    } catch (err) {
+    } catch (err: any) {
+      throw new Error(err?.message || "Something went wrong")
+
     }
   };
 
@@ -169,7 +174,8 @@ const DoctorsPage = () => {
       setDoctors((prev) => prev.map((dd) => (dd.id === mapped.id ? mapped : dd)));
       setIsEditOpen(false);
       setEditDoctor(null);
-    } catch (err) {
+    } catch (err: any) {
+      throw new Error(err?.message || "Something went wrong")
     }
   };
 
@@ -190,10 +196,13 @@ const DoctorsPage = () => {
       width: 100,
       sortable: false,
       renderCell: (params) => (
-        <img
-          src={params.value}
-          alt={params.row.name}
+        <Image
+          src={params?.value || ""}
+          alt={params?.row?.name || ""}
+          fill
           className="w-12 h-12 rounded-full object-cover"
+          loading="lazy"
+          priority={false}
         />
       ),
     },
@@ -253,10 +262,13 @@ const DoctorsPage = () => {
           className="border rounded p-2"
         />
         {newDoctor.profile_img && (
-          <img
-            src={newDoctor.profile_img}
-            alt="Preview"
+          <Image
+            src={newDoctor?.profile_img || ""}
+            alt={"Preview"}
+            fill
             className="w-24 h-24 rounded-full object-cover"
+            loading="lazy"
+            priority={false}
           />
         )}
         <Input
@@ -330,10 +342,13 @@ const DoctorsPage = () => {
                 className="border rounded p-2"
               />
               {editDoctor.profile_img && (
-                <img
-                  src={editDoctor.profile_img}
-                  alt="Preview"
+                <Image
+                  src={editDoctor?.profile_img || ""}
+                  alt={"Preview"}
+                  fill
                   className="w-24 h-24 rounded-full object-cover"
+                  loading="lazy"
+                  priority={false}
                 />
               )}
               <Input

@@ -31,28 +31,6 @@ interface alertForm {
   openAlertMessage: string
 }
 
-// const initialData: Clinic = {
-//   clinicName: "Your Clinic Name",
-//   email: "contact@yourclinic.com",
-//   phone: "+91 9876543210",
-//   workingHours: {
-//     "Monday-Friday": "9:00 AM - 6:00 PM",
-//     Saturday: "10:00 AM - 2:00 PM",
-//     Sunday: "Closed",
-//   },
-//   consultations: [
-//     { day: "Monday", generalPractice: "9:00 AM - 6:00 PM", specialistConsultations: "10:00 AM - 4:00 PM", emergency: "24/7 Available" },
-//     { day: "Tuesday", generalPractice: "9:00 AM - 6:00 PM", specialistConsultations: "10:00 AM - 4:00 PM", emergency: "24/7 Available" },
-//     { day: "Wednesday", generalPractice: "9:00 AM - 6:00 PM", specialistConsultations: "10:00 AM - 4:00 PM", emergency: "24/7 Available" },
-//     { day: "Thursday", generalPractice: "9:00 AM - 6:00 PM", specialistConsultations: "10:00 AM - 4:00 PM", emergency: "24/7 Available" },
-//     { day: "Friday", generalPractice: "9:00 AM - 6:00 PM", specialistConsultations: "10:00 AM - 4:00 PM", emergency: "24/7 Available" },
-//     { day: "Saturday", generalPractice: "9:00 AM - 2:00 PM", specialistConsultations: "By Appointment", emergency: "24/7 Available" },
-//     { day: "Sunday", generalPractice: "Closed", specialistConsultations: "Closed", emergency: "24/7 Available" },
-//   ],
-// };
-
-
-
 
 const AdminClinicPage = () => {
   const [clinicData, setClinicData] = useState<Clinic | null>(null);
@@ -104,15 +82,11 @@ const AdminClinicPage = () => {
   };
 
   // Save clinic info (uses update endpoint when _id is present)
-  const saveClinicData = async (data: Clinic) => {
-    try {
-      const url = data._id ? `/clinic-info/${data._id}` : `/clinic-info`;
-      return await HttpRequest({ url, method: "POST", data });
-    } catch (e) {
-      // Fallback simulation
-      return new Promise((resolve) => setTimeout(resolve, 800));
-    }
-  }; 
+  const saveClinicData = async (data: Clinic): Promise<any> => {
+    const url = data._id ? `/clinic-info/${data._id}` : `/clinic-info`;
+    return HttpRequest({ url, method: "POST", data });
+  };
+
 
   const saveData = async () => {
     if (!clinicData) {
@@ -176,7 +150,8 @@ const AdminClinicPage = () => {
           setClinicData(mapped);
           return;
         }
-      } catch (e) {
+      } catch (e: any) {
+        throw new Error(e?.message || "Somthing went wrong")
         // ignore and fallback
       }
 
